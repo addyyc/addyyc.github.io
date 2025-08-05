@@ -11,3 +11,7 @@ p {
     font-weight: bold;
     font-style: italic;
 }
+a {
+    color: #4a4e69;
+    text-decoration: none;
+}
