@@ -4,11 +4,15 @@
         <link rel="stylesheet" href="../style.css">
         <link rel="icon" type="image/x-icon" href="../assets/roboicon1.ico">
         <title>Robot Game</title> 
+        <script src="game.js"></script>
     </head>
     <body>
         <h1>Welcome to the Robot Game</h1>
         <p>Control your robot and complete challenges!</p>
+        <button type="button" onclick="startGame()">Start Game</button>
+        <button type="button" onclick="endGame()">End Game</button>
         <br>
-        <a href = "game.js" style="color:rgb(149, 149, 149)"> Click here to start!</a>
+        <p id="robot"></p>
+        <p id="end"></p>
     </body>
 </html>
