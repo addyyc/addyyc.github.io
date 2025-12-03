@@ -16,7 +16,8 @@
     .nav-pill{border-radius:9999px; padding:.5rem 1rem; display:inline-block}
     .posts-list a{display:block; padding:.75rem 1rem; border-radius:12px}
     .tab{cursor:pointer}
-    .content-area{min-height:220px}
+  .content-area{min-height:220px; line-height:1.5}
+  .more-box{max-height:260px; overflow:auto; padding:.5rem; border-radius:12px; background:#ffffff}
     /* simple flowy animations */
     .fade{opacity:0; transform:translateY(8px) scale(.995); transition:all .42s cubic-bezier(.22,1,.36,1)}
     .fade.visible{opacity:1; transform:none}
@@ -58,25 +59,53 @@
     // Minimal posts data - you can expand or load this from JSON later
     const posts = {
       'acit-about': {title: 'About ACIT', date: 'Dec 2025', sections: {text: '<p>All Creators in Tech is a club where...</p>', images: '<img src="../assets/kitty.jpeg" alt="club" style="max-width:100%">'}},
-      'acit-upcoming': {title: 'ACIT Club Fair', date: 'Sep 2025', sections: {text: '<p>Our school hosts a club fair in August and September where clubs can gain traction for the year. As we are a PTSA club, we mainly advertised to incoming middle schoolers as well as parents. We have returning members, but we tripled in size this year!</p>'}},
-      'kendo-beginning': {title: 'Kendo Beginning', date: 'Jun 2025', sections: {text: '<p>I started kendo the summer of 2025 and it has been a memorable journey. From participating in the beginners class to volunteering at official taikais, I have come to see the sport in a new light. As I will be fitting into armor soon, Im excited to see how my skills develop.</p>'}},
-      'kendo-volunteering': {title: 'Kendo Volunteering', date: 'Nov 2025', sections: {text: '<p>Volunteering at taikais, I have met many inspiring and diverse individuals. </p>'}},
-      'other-robotics': {title: 'Robotics', date: 'Aug 2025', sections: {text: '<p>From August, I helped the Robotics club set up a high school team and kicked it off for the first two months.</p>'}},
-      'other-badminton': {title: 'Badminton Season', date: 'May 2025', sections: {text: '<p>Played badminton during the spring season both freshman and sophomore year and received a varsity letter! Planning to go into a doubles team as I played singles my sophomore year.</p>'}}
+      'acit-upcoming': {title: 'ACIT Club Fair', date: 'Sep 2025', sections: {text: '<p>Our school hosts a club fair in August and September where clubs can gain traction for the year. As we are a PTSA club, we mainly advertised to incoming middle schoolers as well as parents. We have returning members, but we tripled in size this year!</p>', images: '<img src="../assets/kitty.jpeg" alt="club fair" style="max-width:100%">'}},
+      'kendo-beginning': {title: 'Kendo Beginning', date: 'Jun 2025', sections: {text: '<p>I started kendo the summer of 2025 and it has been a memorable journey. From participating in the beginners class to volunteering at official taikais, I have come to see the sport in a new light. As I will be fitting into armor soon, Im excited to see how my skills develop.</p>', images: '<img src="../assets/kitty.jpeg" alt="kendo" style="max-width:100%">'}},
+      'kendo-volunteering': {title: 'Kendo Volunteering', date: 'Nov 2025', sections: {text: '<p>Volunteering at taikais, I have met many inspiring and diverse individuals. </p>', images: '<img src="../assets/kitty.jpeg" alt="volunteering" style="max-width:100%">'}},
+      'other-robotics': {title: 'Robotics', date: 'Aug 2025', sections: {text: '<p>From August, I helped the Robotics club set up a high school team and kicked it off for the first two months.</p>', images: '<img src="../assets/kitty.jpeg" alt="robotics" style="max-width:100%">'}},
+      'other-badminton': {title: 'Badminton Season', date: 'May 2025', sections: {text: '<p>Played badminton during the spring season both freshman and sophomore year and received a varsity letter! Planning to go into a doubles team as I played singles my sophomore year.</p>', images: '<img src="../assets/kitty.jpeg" alt="badminton" style="max-width:100%">'}}
     };
+
+    // Extra posts for the scrollable 'More updates' box (not featured on main page)
+    const extraPosts = {
+      'news-1': {title: 'Club Update 1', date: 'Oct 2025', sections: {text: '<p>Quick update about club activities...</p>', images: '<img src="../assets/kitty.jpeg" alt="news" style="max-width:100%">'}},
+      'news-2': {title: 'Announcement: Event', date: 'Nov 2025', sections: {text: '<p>Details about the upcoming event...</p>', images: '<img src="../assets/kitty.jpeg" alt="event" style="max-width:100%">'}},
+      'news-3': {title: 'Random Thoughts', date: 'Dec 2025', sections: {text: '<p>Some short post for followers...</p>', images: '<img src="../assets/kitty.jpeg" alt="thoughts" style="max-width:100%">'}}
+    };
+
+    // Merge extra posts into posts map so they can be opened
+    Object.keys(extraPosts).forEach(k => posts[k] = extraPosts[k]);
 
     const params = new URLSearchParams(window.location.search);
     const source = params.get('source');
     const requested = params.get('post');
 
     const postsListEl = document.getElementById('posts-list');
-    Object.keys(posts).forEach(key => {
+    // show the primary six in the left list
+    const primaryKeys = ['acit-about','acit-upcoming','kendo-beginning','kendo-volunteering','other-robotics','other-badminton'];
+    primaryKeys.forEach(key => {
+      if(!posts[key]) return;
       const a = document.createElement('a');
       a.className = 'hover:bg-gray-50 rounded-md';
       a.href = '#';
       a.innerHTML = `<strong>${posts[key].title}</strong> <div class="text-xs text-gray-500">${posts[key].date}</div>`;
       a.addEventListener('click', (e)=>{e.preventDefault(); openPost(key)});
       postsListEl.appendChild(a);
+    });
+
+    // Create a scrollable "More updates" box with extra posts
+    const moreBoxWrapper = document.createElement('div');
+    moreBoxWrapper.className = 'mt-4';
+    moreBoxWrapper.innerHTML = `<h4 class="font-semibold mb-2">More updates</h4><div id="more-posts" class="more-box"></div>`;
+    postsListEl.parentNode.appendChild(moreBoxWrapper);
+    const morePostsEl = document.getElementById('more-posts');
+    Object.keys(extraPosts).forEach(key => {
+      const a = document.createElement('a');
+      a.className = 'block hover:bg-gray-50 rounded-md p-2';
+      a.href = '#';
+      a.innerHTML = `<strong>${extraPosts[key].title}</strong><div class="text-xs text-gray-500">${extraPosts[key].date}</div>`;
+      a.addEventListener('click', (e)=>{e.preventDefault(); openPost(key)});
+      morePostsEl.appendChild(a);
     });
 
     function setBackLink() {
