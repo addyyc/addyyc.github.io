@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Blogs - Addy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/jellyicon1.ico" href="../assets/jellyicon1.ico">
+  <style>
+    body{box-sizing:border-box}
+    .bg-custom-light{background-color:#f8f9fa}
+    .bg-custom-pink{background-color:#f5f0f0}
+    .text-custom-dark{color:#4a5568}
+    .card-hover{transition:transform .36s cubic-bezier(.2,.9,.2,1),box-shadow .36s; border-radius:16px}
+    .card-hover:hover{transform:translateY(-8px) scale(1.02); box-shadow:0 25px 40px rgba(16,24,40,0.08)}
+    .nav-pill{border-radius:9999px; padding:.5rem 1rem; display:inline-block}
+    .posts-list a{display:block; padding:.75rem 1rem; border-radius:12px}
+    .tab{cursor:pointer}
+    .content-area{min-height:220px}
+    /* simple flowy animations */
+    .fade{opacity:0; transform:translateY(8px) scale(.995); transition:all .42s cubic-bezier(.22,1,.36,1)}
+    .fade.visible{opacity:1; transform:none}
+  </style>
+</head>
+<body class="bg-custom-light text-custom-dark font-sans p-6">
+  <div class="max-w-5xl mx-auto">
+    <header class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold">Blog Hub</h1>
+      <div id="back-link"></div>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <aside class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 card-hover">
+        <h3 class="font-semibold mb-2">Posts</h3>
+        <div class="posts-list space-y-2" id="posts-list">
+          <!-- JS will populate -->
+        </div>
+      </aside>
+
+      <section class="md:col-span-2 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <div class="flex justify-between items-start mb-4">
+          <h2 id="post-title" class="text-xl font-bold">Select a post</h2>
+          <div id="post-meta" class="text-sm text-gray-600"></div>
+        </div>
+
+        <div class="mb-4">
+          <nav class="space-x-2" id="post-tabs"></nav>
+        </div>
+
+        <div id="post-content" class="content-area fade">
+          <p class="text-sm text-gray-600">Choose a post from the left to view content. Posts support multiple sub-pages (text, images).</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Minimal posts data - you can expand or load this from JSON later
+    const posts = {
+      'acit-about': {title: 'About ACIT', date: 'Sep 2025', sections: {text: '<p>All Creators in Tech is a club where...</p>', images: '<img src="../assets/kitty.jpeg" alt="club" style="max-width:100%">'}},
+      'acit-upcoming': {title: 'ACIT Upcoming', date: 'Dec 2025', sections: {text: '<p>We are planning workshops...</p>'}},
+      'kendo-beginning': {title: 'Kendo Beginning', date: 'Jun 2025', sections: {text: '<p>I started kendo...</p>'}},
+      'kendo-volunteering': {title: 'Kendo Volunteering', date: 'Nov 2025', sections: {text: '<p>Volunteering at taikais...</p>'}},
+      'other-robotics': {title: 'Robotics Revival', date: 'Aug 2025', sections: {text: '<p>Revived the robotics club...</p>'}},
+      'other-badminton': {title: 'Badminton Season', date: 'May 2025', sections: {text: '<p>Played varsity badminton...</p>'}}
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const source = params.get('source');
+    const requested = params.get('post');
+
+    const postsListEl = document.getElementById('posts-list');
+    Object.keys(posts).forEach(key => {
+      const a = document.createElement('a');
+      a.className = 'hover:bg-gray-50 rounded-md';
+      a.href = '#';
+      a.innerHTML = `<strong>${posts[key].title}</strong> <div class="text-xs text-gray-500">${posts[key].date}</div>`;
+      a.addEventListener('click', (e)=>{e.preventDefault(); openPost(key)});
+      postsListEl.appendChild(a);
+    });
+
+    function setBackLink() {
+      const back = document.getElementById('back-link');
+      const target = source ? `../index.html?open=${encodeURIComponent(source)}` : '../index.html';
+      back.innerHTML = `<a href="${target}" class="nav-pill bg-gray-100">Back</a>`;
+    }
+
+    function openPost(key) {
+      const data = posts[key];
+      if(!data) return;
+      document.getElementById('post-title').innerText = data.title;
+      document.getElementById('post-meta').innerText = data.date;
+
+      const tabsEl = document.getElementById('post-tabs');
+      tabsEl.innerHTML = '';
+      Object.keys(data.sections).forEach((sec, idx)=>{
+        const t = document.createElement('button');
+        t.className = 'tab nav-pill bg-gray-100';
+        t.innerText = sec.charAt(0).toUpperCase() + sec.slice(1);
+        t.addEventListener('click', ()=> openSection(sec, data.sections[sec]));
+        tabsEl.appendChild(t);
+      });
+
+      openSection(Object.keys(data.sections)[0], data.sections[Object.keys(data.sections)[0]]);
+    }
+
+    function openSection(name, html) {
+      const el = document.getElementById('post-content');
+      el.classList.remove('visible');
+      // tiny delay to allow CSS to animate
+      setTimeout(()=>{
+        el.innerHTML = html;
+        el.classList.add('visible');
+      }, 60);
+    }
+
+    setBackLink();
+    if(requested && posts[requested]) openPost(requested);
+  </script>
+</body>
+</html>

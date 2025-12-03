@@ -189,9 +189,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="mb-4">All Creators in Tech is an all-inclusive space where students can find like-minded peers and learn code! The goal is to participate in hackathons, workshops, and other tech events.</p>
-                                <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
+                                <a href="/blogs/index.html?source=acit&post=acit-about" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors inline-block">
                                     Read More
-                                </button>
+                                </a>
                             </div>
                             <div class="bg-custom-light rounded-lg p-4 border-2 border-dashed border-gray-300">
                                 <div class="text-center">
@@ -209,9 +209,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="mb-4">Learning HTML basics to eventually build a website. Beginning the foundations for web development and hackathon submission material.</p>
-                                <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
+                                <a href="/blogs/index.html?source=acit&post=acit-upcoming" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors inline-block">
                                     Read More
-                                </button>
+                                </a>
                             </div>
                             <div class="bg-white rounded-lg p-4 border-2 border-dashed border-gray-300">
                                 <div class="text-center">
@@ -237,9 +237,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="mb-4">Started Kendo and learned the basics. Finished beginners class and moved onto intermediate with uniform.</p>
-                                <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
+                                <a href="/blogs/index.html?source=kendo&post=kendo-beginning" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors inline-block">
                                     Read More
-                                </button>
+                                </a>
                             </div>
                             <div class="bg-custom-light rounded-lg p-4 border-2 border-dashed border-gray-300">
                                 <div class="text-center">
@@ -257,9 +257,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="mb-4">Assisted in running tournaments and ensured all participants had a positive tournament experience with scorekeeping, announcements, and timekeeping.</p>
-                                <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
+                                <a href="/blogs/index.html?source=kendo&post=kendo-volunteering" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors inline-block">
                                     Read More
-                                </button>
+                                </a>
                             </div>
                             <div class="bg-white rounded-lg p-4 border-2 border-dashed border-gray-300">
                                 <div class="text-center">
@@ -285,9 +285,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="mb-4">Revived the club and included high school. Led and set foundation for the club for the 2025-2026 school year.</p>
-                                <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
+                                <a href="/blogs/index.html?source=other&post=other-robotics" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors inline-block">
                                     Read More
-                                </button>
+                                </a>
                             </div>
                             <div class="bg-custom-light rounded-lg p-4 border-2 border-dashed border-gray-300">
                                 <div class="text-center">
@@ -305,9 +305,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p class="mb-4">Played since freshman year for Juanita High School and just finished the season with a Varsity letter!</p>
-                                <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors">
+                                <a href="/blogs/index.html?source=other&post=other-badminton" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm transition-colors inline-block">
                                     Read More
-                                </button>
+                                </a>
                             </div>
                             <div class="bg-white rounded-lg p-4 border-2 border-dashed border-gray-300">
                                 <div class="text-center">
@@ -398,6 +398,13 @@
             if (home) {
                 home.classList.remove('hidden');
                 home.classList.add('visible');
+            }
+            // If URL has ?open=section or ?source=section, open that section
+            const params = new URLSearchParams(window.location.search);
+            const open = params.get('open') || params.get('source');
+            if (open) {
+                // tiny timeout to allow initial paint
+                setTimeout(() => showSection(open), 50);
             }
         });
     </script>

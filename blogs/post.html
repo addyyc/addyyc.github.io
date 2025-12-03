@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Blog Post - Addy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/jellyicon1.ico" href="../assets/jellyicon1.ico">
+  <style>
+    body{box-sizing:border-box}
+    .bg-custom-light{background-color:#f8f9fa}
+    .bg-custom-pink{background-color:#f5f0f0}
+    .text-custom-dark{color:#4a5568}
+    .card-hover{transition:transform .36s cubic-bezier(.2,.9,.2,1),box-shadow .36s; border-radius:16px}
+    .card-hover:hover{transform:translateY(-8px) scale(1.02); box-shadow:0 25px 40px rgba(16,24,40,0.08)}
+    .nav-pill{border-radius:9999px; padding:.5rem 1rem; display:inline-block}
+    .fade{opacity:0; transform:translateY(8px) scale(.995); transition:all .42s cubic-bezier(.22,1,.36,1)}
+    .fade.visible{opacity:1; transform:none}
+  </style>
+</head>
+<body class="bg-custom-light text-custom-dark font-sans p-6">
+  <div class="max-w-4xl mx-auto">
+    <header class="flex items-center justify-between mb-6">
+      <h1 id="title" class="text-2xl font-bold">Post</h1>
+      <div id="back-link"></div>
+    </header>
+
+    <article class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 card-hover">
+      <div id="meta" class="text-sm text-gray-600 mb-4"></div>
+      <div id="content" class="fade">
+        <p class="text-sm text-gray-600">Loading...</p>
+      </div>
+    </article>
+  </div>
+
+  <script>
+    const posts = {
+      'acit-about': {title: 'About ACIT', date: 'Sep 2025', content: '<p>All Creators in Tech is a club where students can learn...</p>'},
+      'kendo-beginning': {title: 'Kendo Beginning', date: 'Jun 2025', content: '<p>I started kendo and learned...</p>'}
+    };
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get('post');
+    const source = params.get('source');
+
+    function setBack(){
+      const back = document.getElementById('back-link');
+      const target = source ? `../index.html?open=${encodeURIComponent(source)}` : '../index.html';
+      back.innerHTML = `<a href="${target}" class="nav-pill bg-gray-100">Back</a>`;
+    }
+
+    function render(){
+      const p = posts[key];
+      if(!p){ document.getElementById('content').innerHTML = '<p>Post not found.</p>'; return; }
+      document.getElementById('title').innerText = p.title;
+      document.getElementById('meta').innerText = p.date;
+      const c = document.getElementById('content');
+      c.classList.remove('visible');
+      setTimeout(()=>{ c.innerHTML = p.content; c.classList.add('visible'); }, 60);
+    }
+
+    setBack(); render();
+  </script>
+</body>
+</html>
