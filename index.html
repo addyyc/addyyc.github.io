@@ -37,6 +37,47 @@
             background-color: #e8d5d5;
             color: #2d3748;
         }
+        /* Flowy / bubbly UI styles */
+        .nav-active {
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.08);
+            border-radius: 9999px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(232,213,213,0.9));
+        }
+        nav button {
+            border-radius: 9999px;
+            transition: transform 240ms cubic-bezier(.2,.9,.2,1), box-shadow 240ms ease, background 240ms ease;
+        }
+        nav button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(16,24,40,0.08);
+        }
+
+        /* Section enter/leave animation */
+        .section-content {
+            opacity: 0;
+            transform: translateY(12px) scale(0.995);
+            transition: opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1);
+            pointer-events: none;
+        }
+        .section-content.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        /* Keep legacy hidden for initial server-rendered state; JS will replace it when animating */
+        .section-content.hidden {
+            display: none !important;
+        }
+
+        /* Card hover - bubbly */
+        .card-hover {
+            transition: transform 360ms cubic-bezier(.2,.9,.2,1), box-shadow 360ms ease;
+            border-radius: 16px;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 40px rgba(16,24,40,0.08);
+        }
     </style>
 </head>
 <body class="bg-custom-light text-custom-dark font-sans">
@@ -54,10 +95,10 @@
                     <button onclick="showSection('acit')" id="nav-acit" class="hover-custom px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         ACIT
                     </button>
-                    <button onclick="showSection('robotics')" id="nav-robotics" class="hover-custom px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    <button onclick="showSection('kendo')" id="nav-kendo" class="hover-custom px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         Kendo
                     </button>
-                    <button onclick="showSection('kendo')" id="nav-kendo" class="hover-custom px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    <button onclick="showSection('other')" id="nav-other" class="hover-custom px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         Other
                     </button>
                 </div>
@@ -71,7 +112,7 @@
         <div id="home-section" class="section-content">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Left Column - Profile -->
-                <div class="bg-white rounded-lg shadow-sm p-6 border border-custom">
+                <div class="bg-white rounded-lg shadow-sm p-6 border border-custom card-hover">
                     <div class="text-center">
                         <div class="w-32 h-32 bg-custom-pink rounded-full mx-auto mb-4 flex items-center justify-center">
                             <span class="text-4xl">👤</span>
@@ -87,7 +128,7 @@
                 </div>
 
                 <!-- Middle Column - Interests -->
-                <div class="bg-white rounded-lg shadow-sm p-6 border border-custom">
+                <div class="bg-white rounded-lg shadow-sm p-6 border border-custom card-hover">
                     <h3 class="text-xl font-bold mb-4">Interests</h3>
                     <div class="space-y-4">
                         <div class="bg-custom-pink rounded-lg p-4">
@@ -110,7 +151,7 @@
                 </div>
 
                 <!-- Right Column - Images & Other -->
-                <div class="bg-white rounded-lg shadow-sm p-6 border border-custom">
+                <div class="bg-white rounded-lg shadow-sm p-6 border border-custom card-hover">
                     <div class="space-y-4">
                         <div class="bg-custom-light rounded-lg p-4 border-2 border-dashed border-gray-300">
                             <div class="text-center">
@@ -140,7 +181,7 @@
             <div class="bg-white rounded-lg shadow-sm p-8 border border-custom">
                 <h2 class="text-3xl font-bold mb-6">All Creators in Tech (ACIT)</h2>
                 <div class="space-y-6">
-                    <div class="bg-custom-pink rounded-lg p-6">
+                    <div class="bg-custom-pink rounded-lg p-6 card-hover">
                         <div class="flex justify-between items-start mb-4">
                             <h3 class="text-xl font-semibold">About ACIT </h3>
                             <span class="text-sm text-gray-600">September 2025</span>
@@ -188,7 +229,7 @@
             <div class="bg-white rounded-lg shadow-sm p-8 border border-custom">
                 <h2 class="text-3xl font-bold mb-6">Kendo</h2>
                 <div class="space-y-6">
-                    <div class="bg-custom-pink rounded-lg p-6">
+                    <div class="bg-custom-pink rounded-lg p-6 card-hover">
                         <div class="flex justify-between items-start mb-4">
                             <h3 class="text-xl font-semibold">Beginning</h3>
                             <span class="text-sm text-gray-600">June 2025</span>
@@ -236,7 +277,7 @@
             <div class="bg-white rounded-lg shadow-sm p-8 border border-custom">
                 <h2 class="text-3xl font-bold mb-6">Other</h2>
                 <div class="space-y-6">
-                    <div class="bg-custom-pink rounded-lg p-6">
+                    <div class="bg-custom-pink rounded-lg p-6 card-hover">
                         <div class="flex justify-between items-start mb-4">
                             <h3 class="text-xl font-semibold">Robotics</h3>
                             <span class="text-sm text-gray-600">August 2025</span>
@@ -305,28 +346,60 @@
     </footer>
 
     <script>
+        // Smoothly transition between sections using visible class
         function showSection(sectionName) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.section-content');
-            sections.forEach(section => {
-                section.classList.add('hidden');
-            });
-            
-            // Remove active class from all nav buttons
+            const sections = Array.from(document.querySelectorAll('.section-content'));
+            const targetId = sectionName + '-section';
+            const targetSection = document.getElementById(targetId);
+            if (!targetSection) {
+                console.warn('showSection: section not found ->', targetId);
+                return;
+            }
+
+            // Update nav visual state
             const navButtons = document.querySelectorAll('nav button');
             navButtons.forEach(button => {
                 button.classList.remove('nav-active');
                 button.classList.add('hover-custom');
             });
-            
-            // Show selected section
-            document.getElementById(sectionName + '-section').classList.remove('hidden');
-            
-            // Add active class to selected nav button
             const activeButton = document.getElementById('nav-' + sectionName);
-            activeButton.classList.add('nav-active');
-            activeButton.classList.remove('hover-custom');
+            if (activeButton) {
+                activeButton.classList.add('nav-active');
+                activeButton.classList.remove('hover-custom');
+            }
+
+            // If a section is currently visible, fade it out first
+            const currentlyVisible = sections.find(s => s.classList.contains('visible'));
+            const animateOut = (elem) => new Promise(res => {
+                if (!elem) return res();
+                elem.classList.remove('visible');
+                // after transition duration (420ms), mark as hidden to remove from flow
+                setTimeout(() => {
+                    elem.classList.add('hidden');
+                    res();
+                }, 420);
+            });
+
+            const animateIn = (elem) => new Promise(res => {
+                elem.classList.remove('hidden');
+                // allow next tick for transition to apply
+                requestAnimationFrame(() => {
+                    elem.classList.add('visible');
+                    setTimeout(res, 420);
+                });
+            });
+
+            animateOut(currentlyVisible).then(() => animateIn(targetSection));
         }
+
+        // Make sure home is visible on first load
+        document.addEventListener('DOMContentLoaded', () => {
+            const home = document.getElementById('home-section');
+            if (home) {
+                home.classList.remove('hidden');
+                home.classList.add('visible');
+            }
+        });
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9865aee5875b754e',t:'MTc1OTA4ODExOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
